@@ -1,0 +1,80 @@
+$bg-color: #f8f8f8; // Фон страницы
+
+.notfound-container {
+  max-width: 65rem;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fff;
+  margin-top: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.notfound-code {
+  font-size: 8rem; 
+  font-weight: bold;
+  color:  $iris;
+  letter-spacing: 0.5rem; // Немного раздвинем цифры
+  margin-bottom: 1rem;
+  display: inline-block; 
+  line-height: 1;
+}
+
+.digit-zero {
+  display: inline-block;
+  color:  $iris;
+}
+
+.notfound-title {
+  font-size: 2.5rem;
+  color: $color-text-main;
+  margin-bottom: 1rem;
+}
+
+.notfound-text {
+  color: $color-text-sub;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.notfound-link {
+  display: inline-block;
+  background-color:  $iris;
+  color: $white;
+  padding: 0.8rem 1.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken( $iris, 10%);
+  }
+}
+
+@media (max-width: 768px) {
+  .notfound-code {
+    font-size: 7rem;
+    letter-spacing: 0.3rem;
+  }
+  .notfound-title {
+    font-size: 2rem;
+  }
+  .notfound-text {
+    font-size: 1rem;
+  }
+  .notfound-container {
+    padding: 1.5rem;
+    margin: 1rem; 
+  }
+}
+
+@media (max-width: 480px) {
+  .notfound-code {
+    font-size: 5rem;
+    letter-spacing: 0.2rem;
+  }
+  .notfound-title {
+    font-size: 1.5rem;
+  }
+}
