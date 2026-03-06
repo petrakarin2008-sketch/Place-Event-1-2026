@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import EventTitle from '../components/EventTitle';
 import EventCard from '../components/EventCard';
 import Card from '../components/Card';
@@ -6,13 +6,15 @@ import CartLoader from '../components/CartLoader';
 import CartLoaderRec from '../components/CartLoaderRec';
 
 const Home = () => {
+  const [activeBut,setActiveBut] = useState('All')
+  const category = ['All', 'Music', 'Food', 'Art', 'Tech'];
   return (
     <>
       <EventTitle />
 
       <section className="comEvSec">
         <EventCard />
-        <CartLoader/>
+        <CartLoader />
       </section>
 
       <div className="category-filters">
@@ -59,17 +61,17 @@ const Home = () => {
       </div>
 
       <div className="category-filters">
-        <button className="filter-btn active">All</button>
-        <button className="filter-btn">Music</button>
-        <button className="filter-btn">Food</button>
-        <button className="filter-btn">Art</button>
-        <button className="filter-btn">Tech</button>
+        {category.map((el, id) => (
+          <button key={id} className={`filter-btn ${activeBut === category[id] ? 'active' : ''}` } onClick={()=> setActiveBut(el)}>
+            {el}
+          </button>
+        ))}
       </div>
 
       <section className="recomend">
         <div className="card__el">
           <Card />
-          <CartLoaderRec/>
+          <CartLoaderRec />
         </div>
       </section>
     </>

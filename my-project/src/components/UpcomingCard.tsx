@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const UpcomingCard = () => {
+  const [isActive,setIsActive] = useState(false)
   return (
-    <div className="upcoming-card yellow">
+    <div className={`upcoming-card yellow  ${isActive && 'active'}`} onClick={()=> setIsActive(!isActive)}>
       <div className="upcoming-card__header">
         <img src="starbucks.png" alt="Starbucks" className="brand-icon" />
         <span className="date">Nov 01, 2022</span>

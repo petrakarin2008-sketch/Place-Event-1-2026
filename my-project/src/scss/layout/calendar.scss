@@ -31,7 +31,7 @@
 .calendar-weekdays {
   display: grid;
   background: aliceblue;
-  grid-template-columns: repeat(7, 1fr); // 7 равных колонок
+  grid-template-columns: repeat(7, 1fr); 
   text-align: center;
   padding-bottom: 15px;
   border-bottom: 1px solid $border-color;
@@ -56,6 +56,7 @@
   border-bottom: 1px solid $border-color;
   position: relative;
   color: $text-main;
+  font-size: 1.3rem;
   font-weight: 500;
   transition: background 0.2s;
 
@@ -370,15 +371,15 @@ $bg-light: #f8f9fb;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    // transition: all 0.3s ease;
+    transition: all 0.3s ease;
     height: 46px; // Чтобы совпадала с высотой инпутов
     display: flex;
     align-items: center;
     justify-content: center;
 
-    // span {
-    //   color: #fff;
-    // }
+    span {
+      color: #fff;
+    }
 
     &:hover {
       transform: translateY(-2px);
@@ -386,9 +387,9 @@ $bg-light: #f8f9fb;
       box-shadow: 0 5px 15px rgba($iris, 0.3);
     }
 
-    // &:active {
-    //   transform: translateY(0);
-    // }
+    &:active {
+      transform: translateY(0);
+    }
   }
 }
 
