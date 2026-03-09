@@ -93,14 +93,18 @@
 // Разноцветные точки событий (как на скриншоте)
 .event-dots {
   display: flex;
-  gap: 4px;
+  gap: 4px; 
+  flex-direction: column;
   margin-top: 10px;
   flex-wrap: wrap;
 
   .dot {
-    width: 20px;
-    height: 12px;
+   padding: 0.1rem;
+    overflow: hidden;
+    font-size: 1.2rem;
+    height: 2rem;
     border-radius: 4px;
+   
 
     &.orange {
       background: #ffedd5;

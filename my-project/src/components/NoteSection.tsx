@@ -1,23 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { formateDate, formateTime } from '../utils';
-
-type SingleEvent = {
-  id: number;
-  date: string;
-  title: string;
-  time: string;
-  other: string;
-};
+import { useDispatch } from 'react-redux';
+import { addEvent } from '../redux/feature/calendarSlice';
 
 interface UpcomingPanelProps {
   isVisible: () => void;
-  updateEvent: (array: SingleEvent) => void;
 }
 
-const NoteSection = ({ isVisible, updateEvent }: UpcomingPanelProps) => {
+const NoteSection = ({ isVisible }: UpcomingPanelProps) => {
   const [inputDate, setInputDate] = useState('');
   const [inputTime, setInputTime] = useState('');
   const [inputDescr, setInputDescr] = useState('');
+
+  const dispatch = useDispatch();
 
   const isInvalid =
     inputDate.trim().length === 0 ||
@@ -25,8 +20,6 @@ const NoteSection = ({ isVisible, updateEvent }: UpcomingPanelProps) => {
     inputDescr.trim().length === 0;
 
   function submit() {
-    console.log(inputTime)
-    
     const array = {
       id: Math.floor(Math.random() * 1000),
       date: formateDate(inputDate),
@@ -34,7 +27,7 @@ const NoteSection = ({ isVisible, updateEvent }: UpcomingPanelProps) => {
       time: formateTime(inputTime),
       other: '',
     };
-    updateEvent(array);
+    dispatch(addEvent({ ...array }));
 
     setInputDate('');
     setInputDescr('');

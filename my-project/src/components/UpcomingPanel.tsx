@@ -1,24 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import UpcomingCard from './UpcomingCard';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../redux/store';
+import dayjs from 'dayjs';
 
-type SingleEvent = {
-  id: number;
-  date: string;
-  title: string;
-  time: string;
-  other: string;
-};
-
-interface UpcomingPanelProps {
-  event: SingleEvent[];
-  setEvent: React.Dispatch<React.SetStateAction<SingleEvent[]>>;
-}
-
-const UpcomingPanel = ({ event, setEvent }: UpcomingPanelProps) => {
+const UpcomingPanel = () => {
   const [activeId, setActiveId] = useState<number | null>(null);
-  function updateTitle(id: number, newTitle: string) {
-    setEvent((prev) => prev.map((el) => (el.id === id ? { ...el, other: newTitle } : el)));
-  }
+
+  const event = useSelector((state: RootState) => state.calendar.event);
 
   return (
     <aside className="upcoming-panel">
@@ -26,20 +15,43 @@ const UpcomingPanel = ({ event, setEvent }: UpcomingPanelProps) => {
 
       <div className="upcoming-section">
         <h3 className="upcoming-section__date">Today</h3>
-        {/* blue,yellow,red */}
-        {event.map((el) => (
-          <UpcomingCard
-            key={el.id}
-            list={el}
-            updateTitle={updateTitle}
-            isActive={activeId === el.id}
-            onToggle={() => setActiveId(activeId === el.id ? null : el.id)}
-          />
-        ))}
+
+        {event.length !== 0 ? (
+          event
+            .filter((el) => {
+              return dayjs(el.date).isSame(dayjs(), 'day');
+            })
+            .map((el) => (
+              <UpcomingCard
+                key={el.id}
+                list={el}
+                isActive={activeId === el.id}
+                onToggle={() => setActiveId(activeId === el.id ? null : el.id)}
+              />
+            ))
+        ) : (
+          <p>пока нет событий</p>
+        )}
       </div>
 
       <div className="upcoming-section">
         <h3 className="upcoming-section__date">Tomorrow</h3>
+        {event.length !== 0 ? (
+          event
+            .filter((el) => {
+              return dayjs(el.date).isAfter(dayjs(), 'day') ;
+            })
+            .map((el) => (
+              <UpcomingCard
+                key={el.id}
+                list={el}
+                isActive={activeId === el.id}
+                onToggle={() => setActiveId(activeId === el.id ? null : el.id)}
+              />
+            ))
+        ) : (
+          <p>пока нет событий</p>
+        )}
       </div>
     </aside>
   );

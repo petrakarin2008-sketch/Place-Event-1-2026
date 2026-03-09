@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { renameEvent } from '../redux/feature/calendarSlice';
 
 const colors = ['yellow', 'blue', 'red'];
 interface UpcomingCardProps {
   list: ps;
-  isActive: boolean; 
+  isActive: boolean;
   onToggle: () => void;
-  updateTitle: (id: number, title: string) => void;
 }
 interface ps {
   id: number;
@@ -15,17 +16,17 @@ interface ps {
   other: string;
 }
 
-const UpcomingCard = ({ list, updateTitle,isActive,onToggle }: UpcomingCardProps) => {
+const UpcomingCard = ({ list, isActive, onToggle }: UpcomingCardProps) => {
   const { title, time, date, other, id } = list;
 
   const [randomColor] = useState(() => colors[Math.floor(Math.random() * colors.length)]); //создастя только при рендере компонента
-  const [inputVal] = useState('');
+
+  const dispatch = useDispatch();
+  const [inputVal, setInputVal] = useState(other.length !== 0 ?  other : '');
   const [addOther, setAddOther] = useState(false);
 
   return (
-    <div
-      className={`upcoming-card ${randomColor}  ${isActive && 'active'}`}
-      onClick={onToggle}>
+    <div className={`upcoming-card ${randomColor}  ${isActive && 'active'}`} onClick={onToggle}>
       <div className="upcoming-card__header">
         <img src="starbucks.png" alt="Starbucks" className="brand-icon" />
         <span className="date">{date}</span>
@@ -37,6 +38,12 @@ const UpcomingCard = ({ list, updateTitle,isActive,onToggle }: UpcomingCardProps
           className={`upcoming-card__btn`}
           onClick={(e) => {
             e.stopPropagation();
+            dispatch(
+              renameEvent({
+                id: id,
+                newTitle: inputVal,
+              }),
+            );
             setAddOther(!addOther);
           }}>
           {addOther ? 'Save' : 'Change'}
@@ -47,8 +54,10 @@ const UpcomingCard = ({ list, updateTitle,isActive,onToggle }: UpcomingCardProps
       {addOther && (
         <div className={`input-container visible`}>
           <input
-            value={other.length !== 0 ? other : inputVal}
-            onChange={(e) => updateTitle(id, e.target.value)}
+            value={inputVal}
+            onChange={(e) => {
+              setInputVal(e.target.value);
+            }}
             type="text"
             className="modern-input"
             placeholder="Add details..."
