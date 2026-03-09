@@ -93,18 +93,17 @@
 // Разноцветные точки событий (как на скриншоте)
 .event-dots {
   display: flex;
-  gap: 4px; 
+  gap: 4px;
   flex-direction: column;
   margin-top: 10px;
   flex-wrap: wrap;
 
   .dot {
-   padding: 0.1rem;
+    padding: 0.1rem;
     overflow: hidden;
     font-size: 1.2rem;
     height: 2rem;
     border-radius: 4px;
-   
 
     &.orange {
       background: #ffedd5;
@@ -328,11 +327,20 @@ $text-sub: #71717a;
   background: rgba(11, 6, 6, 0.15);
 }
 
-/* Кнопка "Save" (пример выделения цветом) */
 .upcoming-card__btn.save {
   background-color: #ffffff;
   color: #000;
   font-weight: 600;
+}
+
+.upcoming-card__btn.delete {
+  background-color: #e22121a3;
+  color: #fafafa;
+  font-weight: 600;
+
+  &:hover{
+    background-color: #961616;
+  }
 }
 
 $iris: #5669ff;

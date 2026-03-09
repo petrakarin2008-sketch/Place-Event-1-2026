@@ -1,19 +1,15 @@
 import dayjs, { Dayjs } from 'dayjs';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
 
-interface allDays {
-  date: Dayjs;
-  current: boolean;
-}
 
 const dayOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(dayjs());
-  const [fullCalendar, setFullCalendar] = useState<allDays[]>();
+  
 
   const event = useSelector((state: RootState) => state.calendar.event);
 
@@ -37,9 +33,8 @@ const Calendar = () => {
     );
   }, [event]);
 
-  console.log(eventsMap);
 
-  const generateCalendar = () => {
+  const generateCalendar =useMemo( () => {
     const firstDayOfMonth = currentMonth.startOf('month').day(); //31
 
     const firstDayIndex = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
@@ -83,9 +78,9 @@ const Calendar = () => {
         });
       }
     }
-
-    setFullCalendar(allDays);
-  };
+    return allDays
+    
+  },[currentMonth]);
 
   function changeMonth(type: string) {
     if (type === 'next') {
@@ -94,12 +89,6 @@ const Calendar = () => {
       setCurrentMonth(currentMonth.subtract(1, 'month'));
     }
   }
-
-  console.log(fullCalendar);
-  // console.log(eventsMap['2026-03-08'].map((el)=> el.title))
-  useEffect(() => {
-    generateCalendar();
-  }, [currentMonth]);
 
   return (
     <>
@@ -127,8 +116,8 @@ const Calendar = () => {
       </header>
 
       <div className="calendar-grid">
-        {fullCalendar &&
-          fullCalendar.map((item, idx) => (
+        {generateCalendar.length !== 0 &&
+          generateCalendar.map((item, idx) => (
             <div
               key={idx}
               className={`day-cell ${!item.current ? 'next-month' : ''} ${item.date.isSame(dayjs(), 'day') ? 'active' : ''}`}>
@@ -137,7 +126,7 @@ const Calendar = () => {
               <div className="event-dots">
                 {eventsMap[item.date.format('YYYY-MM-DD')]
                   ? eventsMap[item.date.format('YYYY-MM-DD')].map((el) => (
-                      <p className="dot orange">{el.title}</p>
+                      <p key={el.id} className="dot orange">{el.title}</p>
                     ))
                   : null}
               </div>
