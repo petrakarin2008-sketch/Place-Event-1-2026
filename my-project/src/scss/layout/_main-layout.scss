@@ -5,7 +5,7 @@
   height: 100vh;
   background: $gray-light;
 
-  @include respond-to(1051px){
+  @include respond-to(1051px) {
     flex-direction: column-reverse;
   }
 }
@@ -49,12 +49,11 @@
     color: $color-text-main;
     margin: 1.3rem 0;
 
-
-    @include respond-to(610px){
+    @include respond-to(610px) {
       font-size: 2.5rem;
     }
 
-    @include respond-to(350px){
+    @include respond-to(350px) {
       font-size: 2rem;
     }
   }
@@ -77,4 +76,25 @@
   &::-webkit-scrollbar {
     display: none;
   }
+
+  // -webkit-overflow-scrolling: touch;
+
+  // &::-webkit-scrollbar {
+  //   height: 6px;
+  // }
+
+  // &::-webkit-scrollbar-track {
+  //   background: rgba(217, 15, 15, 0.918);
+  //   border-radius: 10px;
+  // }
+
+  // &::-webkit-scrollbar-thumb {
+  //   background: rgba(24, 23, 23, 0.89);
+  //   border-radius: 10px;
+  //   transition: background 0.3s;
+  // }
+
+  // &::-webkit-scrollbar-thumb:hover {
+  //   background: rgba(255, 255, 255, 0.5);
+  // }
 }

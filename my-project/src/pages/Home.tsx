@@ -5,41 +5,50 @@ import Card from '../components/Card';
 import CartLoader from '../components/CartLoader';
 import CartLoaderRec from '../components/CartLoaderRec';
 import dayjs from 'dayjs';
+import { useAppDispatch, type RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
   const [activeBut, setActiveBut] = useState('All');
   const category = ['All', 'Music', 'Food', 'Art', 'Tech'];
-  const [comingEventsApi, setComingEventsApi] = useState();
+  const { comingEvents, isLoading, error } = useSelector((state: RootState) => state.eventsApi);
 
+  const dispatch = useAppDispatch();
+
+  const events = comingEvents?._embedded?.events || [];
+ 
   useEffect(() => {
-    const ComSonStart = `${dayjs().format('YYYY-MM-DD')}T00:00:00Z`;
-    const ComSonEnd = `${dayjs().add(10, 'day').format('YYYY-MM-DD')}T00:00:00Z`;
     async function add() {
       // const res = await fetch('https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=2026-03-15T00:00:00Z&endDateTime=2026-03-20T00:00:00Z&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w')
       //https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w
       //https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=2026-03-15T00:00:00Z&endDateTime=2026-03-20T00:00:00Z&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w
-
-      const commingSoonApi = await fetch(
-        `https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=${ComSonStart}&endDateTime=${ComSonEnd}&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w`,
-      );
-
-      const date = await commingSoonApi.json();
-      setComingEventsApi(date._embedded.events);
+      // const commingSoonApi = await fetch(
+      //   `https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=${ComSonStart}&endDateTime=${ComSonEnd}&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w`,
+      // );
+      // const date = await commingSoonApi.json();
+      // setComingEventsApi(date._embedded.events);
       // console.log(date);
     }
     add();
   }, []);
 
-  console.log(comingEventsApi)
+  if (events.length === 0) return <p>No events found.</p>;
 
   return (
     <>
       <EventTitle />
 
-      <section className="comEvSec">
-        <EventCard />
-        <CartLoader />
-      </section>
+      {isLoading ? (
+        Array(2)
+          .fill(null)
+          .map((_, id) => <CartLoader key={id} />)
+      ) : (
+        <section className="comEvSec">
+          {events?.map((el) => {
+            return <EventCard key={el.id} el={el} />;
+          })}
+        </section>
+      )}
 
       <div className="category-filters">
         {/* <button className="filter-btn" onclick="scrollTags(-1)">

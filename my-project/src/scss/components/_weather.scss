@@ -102,7 +102,7 @@
   &__hourly {
     display: flex;
     overflow-x: auto;
-    justify-content: space-between;
+   
     scroll-snap-type: x mandatory;
     gap: 1rem;
     padding: 1.5rem 0.5rem;

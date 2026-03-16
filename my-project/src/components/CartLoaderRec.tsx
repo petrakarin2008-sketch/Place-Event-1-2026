@@ -1,15 +1,15 @@
 
 import ContentLoader from "react-content-loader"
 
-const CartLoaderRec = (props) => (
+const CartLoaderRec = () => (
   <ContentLoader 
     speed={2}
     width='44rem'
     height='9.5rem'
-    viewBox="0 0 44rem 9.5rem"
+    viewBox="0 0 440 95"
     backgroundColor="#dedede"
     foregroundColor="#ecebeb"
-    {...props}
+   
   >
     <rect x="9rem" y="1rem" rx="5" ry="5" width="26.7rem" height="3.5rem" /> 
 

@@ -18,7 +18,7 @@ const Header = () => {
               <span>Learn</span>ify
             </span>
           </h2>
-          {pathname != '/events' && (
+          { !['/', '/events'].includes(pathname) && (
             <div className="left-item">
               <div className="seach">
                 <input type="text" placeholder="Search..." />
