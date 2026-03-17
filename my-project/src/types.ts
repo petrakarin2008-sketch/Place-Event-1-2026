@@ -170,8 +170,8 @@ interface Location {
 
 export interface IEvents {
   _embedded: Embedded2;
-  _links: Links3;
-  page: Page;
+  // _links: Links3;
+  // page: Page;
 }
 
 interface Page {

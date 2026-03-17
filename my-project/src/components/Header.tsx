@@ -1,8 +1,36 @@
+import { useEffect, useState } from 'react';
+
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
+import { useAppDispatch, type RootState } from '../redux/store';
+import { inputValues } from '../redux/feature/comEventApiSlice';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+  const [inputVal, setInputVal] = useState('');
+  const [debouncedValue] = useDebounce(inputVal, 1000);
+
+  const { pathnameR } = useSelector((state: RootState) => state.eventsApi);
+
+  const dispatch = useAppDispatch();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (pathname !== pathnameR) {
+      setTimeout(() => {
+        setInputVal('');
+        dispatch(inputValues(''));
+      }, 0);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (debouncedValue === '' || debouncedValue) {
+      dispatch(inputValues(debouncedValue));
+    }
+  }, [debouncedValue]);
+
   return (
     <>
       {pathname === '/cart-detail' ? (
@@ -11,17 +39,22 @@ const Header = () => {
           <p className="description">View and edit AI-generated travel plans</p>
         </header>
       ) : (
-        <header className="header" >
+        <header className="header">
           <h2>
             Welcom to{' '}
             <span>
               <span>Learn</span>ify
             </span>
           </h2>
-          { !['/', '/events'].includes(pathname) && (
+          {!['/', '/events'].includes(pathname) && (
             <div className="left-item">
               <div className="seach">
-                <input type="text" placeholder="Search..." />
+                <input
+                  value={inputVal}
+                  onChange={(e) => setInputVal(e.target.value.trim())}
+                  type="text"
+                  placeholder="Search..."
+                />
                 <img src="./image//search-svgrepo.png" alt="" />
               </div>
             </div>

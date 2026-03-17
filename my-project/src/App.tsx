@@ -7,7 +7,10 @@ import CardDetails from './pages/CardDetails';
 import Event from './pages/Event';
 import SeeAll from './pages/SeeAll';
 
+
 function App() {
+  
+ 
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>

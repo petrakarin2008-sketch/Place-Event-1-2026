@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import type { Event, IEvents } from '../../types';
+import type { Event } from '../../types';
 
 interface FetchEventsArgs {
   start: string;
@@ -27,17 +27,26 @@ export const FetchEvents = createAsyncThunk(
 );
 
 export interface WeatherState {
-  comingEvents: IEvents | undefined;
+  comingEvents: Event[];
   favouriteEv: Record<string, Omit<Event, 'id'>>;
   isLoading: boolean;
   error: string;
+  page: number;
+  inputValRed: string;
+  pathnameR: string;
+  filtersComingEvent: Event[];
 }
 
 const initialState: WeatherState = {
-  comingEvents: undefined,
+  comingEvents: [],
+  filtersComingEvent: [],
+  page: 0,
   isLoading: false,
   favouriteEv: {},
+
+  pathnameR: '/',
   error: '',
+  inputValRed: '',
 };
 
 export const comEventApiSlice = createSlice({
@@ -45,16 +54,32 @@ export const comEventApiSlice = createSlice({
   initialState,
   reducers: {
     addFavourite: (state, action) => {
-      const { id, ...data } = action.payload;  //диструкторизация
+      const { id, ...data } = action.payload; //диструкторизация
       if (!state.favouriteEv[id]) {
-        state.favouriteEv[id] = data;   //{'key':{...data}}
+        state.favouriteEv[id] = data; //{'key':{...data}}
       }
     },
+   
+    filterSeeAll: (state) => {
+      const query = state.inputValRed.trim().toLowerCase();
+
+      if (!query) {
+        state.filtersComingEvent = [];
+      } else {
+        state.filtersComingEvent = state.comingEvents.filter((el) =>
+          el.name?.toLowerCase().includes(query),
+        );
+      }
+    },
+
     removeFavourite: (state, action) => {
       const id = action.payload;
       if (state.favouriteEv[id]) {
         delete state.favouriteEv[id];
       }
+    },
+    inputValues: (state, action) => {
+      state.inputValRed = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -62,10 +87,16 @@ export const comEventApiSlice = createSlice({
       .addCase(FetchEvents.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(FetchEvents.fulfilled, (state, actions) => {
-        state.comingEvents = actions.payload;
-
+      .addCase(FetchEvents.fulfilled, (state, action) => {
         state.isLoading = false;
+
+        const newEvents = action.payload._embedded?.events || [];
+
+        const existingIds = new Set(state.comingEvents.map((event) => event.id));
+
+        const union = newEvents.filter((newEvent: Event) => !existingIds.has(newEvent.id));
+        state.comingEvents = [...state.comingEvents, ...union];
+        state.page += 1;
       })
       .addCase(FetchEvents.rejected, (state, actions) => {
         state.isLoading = false;
@@ -73,5 +104,6 @@ export const comEventApiSlice = createSlice({
       });
   },
 });
-export const { addFavourite, removeFavourite } = comEventApiSlice.actions;
+export const { addFavourite, removeFavourite, inputValues, filterSeeAll } =
+  comEventApiSlice.actions;
 export default comEventApiSlice.reducer;

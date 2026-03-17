@@ -15,7 +15,7 @@ const Home = () => {
 
   const dispatch = useAppDispatch();
 
-  const events = comingEvents?._embedded?.events || [];
+  const events = comingEvents?.length !== 0 ? comingEvents : [];
  
   useEffect(() => {
     async function add() {
