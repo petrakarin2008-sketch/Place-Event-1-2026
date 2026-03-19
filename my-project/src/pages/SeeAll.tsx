@@ -7,10 +7,10 @@ import { FetchEvents, filterSeeAll } from '../redux/feature/comEventApiSlice';
 import { useEffect } from 'react';
 
 const SeeAll = () => {
-  const { comingEvents, isLoading, inputValRed, filtersComingEvent } = useSelector(
+  const { comingEvents, isLoadingCom, inputValRed, filtersComingEvent } = useSelector(
     (state: RootState) => state.eventsApi,
   );
-  const page = useSelector((state: RootState) => state.eventsApi.page);
+  const page = useSelector((state: RootState) => state.eventsApi.pageCom);
 
   const isSearch = inputValRed?.trim().length > 0;
   const events = isSearch ? filtersComingEvent : comingEvents;
@@ -55,9 +55,9 @@ const SeeAll = () => {
       <div className="seeAll-cart">
         {events.length > 0
           ? events.map((el) => <EventCard key={el.id} el={el} />)
-          : !isLoading && <p>Ничего не найдено</p>}
+          : !isLoadingCom && <p>Ничего не найдено</p>}
 
-        {isLoading &&
+        {isLoadingCom &&
           Array(3)
             .fill(null)
             .map((_, i) => <CartLoader key={i} />)}

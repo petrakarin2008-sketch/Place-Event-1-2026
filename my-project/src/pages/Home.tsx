@@ -1,74 +1,82 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import EventTitle from '../components/EventTitle';
 import EventCard from '../components/EventCard';
-import Card from '../components/Card';
 import CartLoader from '../components/CartLoader';
-import CartLoaderRec from '../components/CartLoaderRec';
-import dayjs from 'dayjs';
 import { useAppDispatch, type RootState } from '../redux/store';
 import { useSelector } from 'react-redux';
+import { Fetch } from '../redux/feature/comEventApiSlice';
+
+const options = [
+  { label: 'name(asc)', value: 'name,asc' },
+  { label: 'name(desc)', value: 'name,desc' },
+  { label: 'date(asc)', value: 'date,asc' },
+  { label: 'date(desc)', value: 'date,desc' },
+];
 
 const Home = () => {
-  const [activeBut, setActiveBut] = useState('All');
-  const category = ['All', 'Music', 'Sport'];
+  const [activeBut, setActiveBut] = useState('Music');
+  const category = ['Music', 'Sport', 'All'];
   const [inputKeyword, setInputKeyword] = useState('');
-  const [startDate, setStartDate] = useState(() => dayjs().format('YYYY-MM-DD'));
+  const [startDate, setStartDate] = useState('');
   const [endtDate, setEndtDate] = useState('');
-  const [filterVal, setFilterVal] = useState('Tomate');
+  const [filterVal, setFilterVal] = useState<string>();
   const [isEng, setIsEng] = useState(true);
-  const { comingEvents, isLoading, error } = useSelector((state: RootState) => state.eventsApi);
+  const { comingEvents, isLoadingCom, errorCom, allEvents, isLoadingAllEv, pageAllEv } =
+    useSelector((state: RootState) => state.eventsApi);
 
   const dispatch = useAppDispatch();
-  const options = [
-    { label: 'Tomate', value: 1 },
-    { label: 'Queso', value: 2 },
-  ];
-
-  
 
   const validation = (e) => {
     const input = e.target.value;
     const regex = /[а-яёА-ЯЁ]/;
 
     if (regex.test(input)) {
-      setIsEng(false)
+      setIsEng(false);
     } else {
-     setIsEng(true)
+      setIsEng(true);
     }
-    setInputKeyword(input);
+    setInputKeyword(input.trim());
   };
+
+  function submite() {
+    if (isEng) {
+      const sort = options.find((el) => el.label === filterVal);
+
+      const classification = activeBut === 'All' ? undefined : activeBut;
+      dispatch(
+        Fetch({
+          start: startDate,
+          end: endtDate,
+          sort: sort?.value,
+          keyword: inputKeyword,
+          classificationName: classification,
+        }),
+      );
+      setInputKeyword('');
+    }
+  }
+
+  const handlePageChange = () => {
+    dispatch(
+      Fetch({
+        other: true,
+        page: pageAllEv,
+      }),
+    );
+  };
+
 
   const events = comingEvents?.length !== 0 ? comingEvents : [];
 
-  function submite() {
-    if(isEng){
-       console.log(inputKeyword, startDate, endtDate, filterVal, activeBut);
-    }
-   
-  }
-
-  useEffect(() => {
-    async function add() {
-      // const res = await fetch('https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=2026-03-15T00:00:00Z&endDateTime=2026-03-20T00:00:00Z&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w')
-      //https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w
-      //https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=2026-03-15T00:00:00Z&endDateTime=2026-03-20T00:00:00Z&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w
-      // const commingSoonApi = await fetch(
-      //   `https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=${ComSonStart}&endDateTime=${ComSonEnd}&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w`,
-      // );
-      // const date = await commingSoonApi.json();
-      // setComingEventsApi(date._embedded.events);
-      // console.log(date);
-    }
-    add();
-  }, []);
-
+  const allevents = allEvents?.length !== 0 ? allEvents : [];
+  
   if (events.length === 0) return <p>No events found.</p>;
 
   return (
     <>
       <EventTitle />
 
-      {isLoading ? (
+      {isLoadingCom ? (
         Array(2)
           .fill(null)
           .map((_, id) => <CartLoader key={id} />)
@@ -100,8 +108,8 @@ const Home = () => {
             </button>
           ))}
           <div className="filter-groups">
-            <input 
-            style={!isEng ? {borderColor:'red'} : {}}
+            <input
+              style={!isEng ? { borderColor: 'red' } : {}}
               value={inputKeyword}
               onChange={(e) => validation(e)}
               type="text"
@@ -163,7 +171,12 @@ const Home = () => {
                 </svg>
               </div>
 
-              <select className="filter-real-select" onChange={(e) => setFilterVal(e.target.value)}>
+              <select
+                className="filter-real-select"
+                onChange={(e) => {
+                  setFilterVal(e.target.value);
+                }}>
+                <option value="">-- Выберите категорию --</option>
                 {options.map((el) => (
                   <option value={el.label} key={el.value}>
                     {el.label}
@@ -179,11 +192,28 @@ const Home = () => {
       </div>
 
       <section className="recomend">
-        <div className="card__el">
-          <Card />
-          <CartLoaderRec />
+        {allevents.length === 0 && !isLoadingAllEv ? (
+          <p>По данному запросу ничего не найдено измените поиск</p>
+        ) : null}
+        <div className="seeAll-cart">
+          {allevents.length > 0 && allevents.map((el) => <EventCard key={el.id} el={el} />)}
+
+          {isLoadingAllEv && <p>loading...</p>}
         </div>
+         
+        {allevents.length > 0 && (
+          <div
+            style={{
+              marginTop: '3rem',
+              display: 'flex',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}>
+            <p onClick={handlePageChange}>Загрузить еще</p>
+          </div>
+        )}
       </section>
+     
     </>
   );
 };

@@ -7,6 +7,16 @@ interface FetchEventsArgs {
   end: string;
   page: number;
 }
+
+interface FetchAllEvents {
+  start: string;
+  end: string;
+  page: number;
+  sort: string;
+  keyword: string;
+  classificationName: string;
+  other: boolean;
+}
 export const FetchEvents = createAsyncThunk(
   'events/fetch',
   async ({ start, end, page }: FetchEventsArgs, thunkAPI) => {
@@ -26,26 +36,84 @@ export const FetchEvents = createAsyncThunk(
   },
 );
 
+export const Fetch = createAsyncThunk(
+  'Allevents/fetch',
+  async (
+    {
+      start,
+      end,
+      page = 1,
+      sort,
+      keyword,
+      classificationName,
+      other = false,
+    }: Partial<FetchAllEvents>,
+    thunkAPI,
+  ) => {
+    const queryParams: Record<string, any> = {
+      apikey: 'BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w',
+      page,
+      ...(start && { startDateTime: `${start}T00:00:00Z` }),
+      ...(end && { endDateTime: `${end}T00:00:00Z` }),
+      ...(keyword && { keyword }),
+      ...(classificationName && { classificationName }),
+      ...(sort && { sort }),
+    };
+
+    const searchParams = new URLSearchParams(queryParams).toString();
+
+    try {
+      const response = await fetch(
+        `https://app.ticketmaster.com/discovery/v2/events.json?${searchParams}`,
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        return thunkAPI.rejectWithValue(errorData.error.message || 'Ошибка сервера');
+      }
+      const arr = await response.json();
+      if (other) {
+        arr['other'] = true;
+      }
+
+     
+      return arr;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err);
+    }
+  },
+);
+
 export interface WeatherState {
   comingEvents: Event[];
+  allEvents: Event[];
   favouriteEv: Record<string, Omit<Event, 'id'>>;
-  isLoading: boolean;
-  error: string;
-  page: number;
-  inputValRed: string;
 
+  isLoadingCom: boolean;
+  errorCom: string;
+  pageCom: number;
+
+  pageAllEv: number;
+  isLoadingAllEv: boolean;
+  errorAllEv: string;
+
+  inputValRed: string;
   filtersComingEvent: Event[];
 }
 
 const initialState: WeatherState = {
   comingEvents: [],
+  allEvents: [],
   filtersComingEvent: [],
-  page: 0,
-  isLoading: false,
-  favouriteEv: {},
-
-  error: '',
   inputValRed: '',
+
+  pageCom: 0,
+  isLoadingCom: false,
+  favouriteEv: {},
+  errorCom: '',
+
+  pageAllEv: 0,
+  isLoadingAllEv: false,
+  errorAllEv: '',
 };
 
 export const comEventApiSlice = createSlice({
@@ -84,10 +152,10 @@ export const comEventApiSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(FetchEvents.pending, (state) => {
-        state.isLoading = true;
+        state.isLoadingCom = true;
       })
       .addCase(FetchEvents.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.isLoadingCom = false;
 
         const newEvents = action.payload._embedded?.events || [];
 
@@ -99,11 +167,39 @@ export const comEventApiSlice = createSlice({
           }
         });
 
-        state.page += 1;
+        state.pageCom += 1;
       })
       .addCase(FetchEvents.rejected, (state, actions) => {
-        state.isLoading = false;
-        state.error = (actions.payload as string) || 'Unknown error';
+        state.isLoadingCom = false;
+        state.errorCom = (actions.payload as string) || 'Unknown error';
+      })
+      .addCase(Fetch.pending, (state) => {
+        state.isLoadingAllEv = true;
+      })
+      .addCase(Fetch.fulfilled, (state, action) => {
+        state.isLoadingAllEv = false;
+        const { other } = action.payload;
+
+        if (other) {
+          const newEvents = action.payload._embedded?.events || [];
+
+          const existingIds = new Set(state.allEvents.map((event) => event.id));
+
+          newEvents.forEach((newEvent: Event) => {
+            if (!existingIds.has(newEvent.id)) {
+              state.allEvents.push(newEvent);
+            }
+          });
+        } else {
+          state.allEvents = action.payload._embedded?.events || [];
+        }
+
+        state.pageAllEv += 1;
+      })
+      .addCase(Fetch.rejected, (state, actions) => {
+        state.isLoadingAllEv = false;
+        state.errorAllEv = (actions.payload as string) || 'Unknown error';
+        console.log('error');
       });
   },
 });
