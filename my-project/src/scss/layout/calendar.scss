@@ -90,11 +90,11 @@
   }
 }
 
-// Разноцветные точки событий (как на скриншоте)
+
 .event-dots {
   display: flex;
   gap: 4px;
-  flex-direction: column;
+  flex-direction: row;
   margin-top: 10px;
   flex-wrap: wrap;
 
@@ -446,6 +446,13 @@ $bg-light: #f8f9fb;
       transform: translateY(0);
     }
   }
+}
+
+.round-img {
+  width: 20px;       
+  height: 20px;     
+  border-radius: 40px; 
+  object-fit: cover;  
 }
 
 // Адаптация для мобильных устройств

@@ -21,10 +21,11 @@ const NoteSection = ({ isVisible }: UpcomingPanelProps) => {
 
   function submit() {
     const array = {
-      id: Math.floor(Math.random() * 1000),
+      id: Math.floor(Math.random() * 1000).toString(),
       date: formateDate(inputDate),
       title: inputDescr,
       time: formateTime(inputTime),
+      img:'/vite.svg',
       other: '',
     };
     dispatch(addEvent({ ...array }));

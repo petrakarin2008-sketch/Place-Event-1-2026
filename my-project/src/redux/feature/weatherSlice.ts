@@ -7,14 +7,15 @@ interface Idates {
   city: string;
   date: string;
   types: 'today' | 'future';
+  willDay: number;
 }
 
 export const FetchWeather = createAsyncThunk(
   'weather/fetch',
-  async ({ city, date, types }: Idates, thunkAPI) => {
+  async ({ city, date, types, willDay }: Idates, thunkAPI) => {
     const url =
       types === 'today'
-        ? `https://api.weatherapi.com/v1/forecast.json?key=83ba5181d2434bd6861103130261003&q=${city}&days=1&aqi=no&alerts=no`
+        ? `https://api.weatherapi.com/v1/forecast.json?key=83ba5181d2434bd6861103130261003&q=${city}&days=${willDay}&aqi=no&alerts=no`
         : `http://api.weatherapi.com/v1/future.json?key=83ba5181d2434bd6861103130261003&q=${city}&dt=${date}`;
 
     try {
@@ -58,12 +59,12 @@ export const weatherSlice = createSlice({
         state.viewType = 'current' in actions.payload ? 'current' : 'future';
         state.weather = actions.payload;
 
-        state.weatherHour = state.weather?.forecast.forecastday[0].hour;
+        const lengthArr = state.weather?.forecast.forecastday.length || 0;
 
-        console.log(state.weather);
+        state.weatherHour = state.weather?.forecast.forecastday[lengthArr - 1].hour;
 
         const currentDateApi = dayjs(
-          state.weather?.forecast.forecastday[0].date.split(' ')[0],
+          state.weather?.forecast.forecastday[lengthArr - 1].date.split(' ')[0],
         ).isSame(dayjs(), 'day');
 
         if (currentDateApi) {

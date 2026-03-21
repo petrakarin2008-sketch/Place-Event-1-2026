@@ -7,18 +7,19 @@ interface futureW {
   weatherHour: WeatherHours[] | undefined;
 }
 
+//weatherHour[0] === el ? 'NOW' : 
 const CurrentWeather = ({ weather, weatherHour }: futureW) => {
+  
   return (
     <section className="weather-widget">
       <div className="weather-widget__main">
         <div className="weather-widget__info">
           <h2 className="weather-widget__city">{weather.location.name}</h2>
-          <p className="weather-widget__date">{formateDate(weather.location.localtime)}</p>
+          <p className="weather-widget__date">{formateDate(weatherHour?.[0]?.time)}</p>
           <div className="weather-widget__condition">
             <img
               src={
-                weather.current?.condition?.icon ||
-                weather.forecast.forecastday[0].day.condition.icon
+                weather.current?.condition?.icon
               }
               alt={weather.current?.condition?.text}
               className="weather-widget__icon"
@@ -56,7 +57,7 @@ const CurrentWeather = ({ weather, weatherHour }: futureW) => {
             <Fragment key={el.time_epoch}>
               <div className="forecast-item ">
                 <span className="forecast-item__time">
-                  {weatherHour[0] === el ? 'NOW' : el.time.split(' ')[1]}
+                  {el.time.split(' ')[1]}
                 </span>
                 <img
                   src={el.condition.icon}

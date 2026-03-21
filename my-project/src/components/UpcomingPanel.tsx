@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { removeEvent, renameEvent } from '../redux/feature/calendarSlice';
 
 const UpcomingPanel = () => {
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const dispatch = useDispatch();
  
   const event = useSelector((state: RootState) => state.calendar.event);
@@ -46,19 +46,19 @@ const UpcomingPanel = () => {
   // }, [event, todayStr, tomorrowStr]);
 
 
-  const handleToggle = useCallback((id: number) => {
+  const handleToggle = useCallback((id: string) => {
     setActiveId((prev) => (prev === id ? null : id));
   }, []);
 
   const handleRemove = useCallback(
-    (id: number) => {
+    (id: string) => {
       dispatch(removeEvent({ id }));
     },
     [dispatch],
   );
 
   const handleRename = useCallback(
-    (id: number, newTitle: string) => {
+    (id: string, newTitle: string) => {
       dispatch(
         renameEvent({
           id: id,

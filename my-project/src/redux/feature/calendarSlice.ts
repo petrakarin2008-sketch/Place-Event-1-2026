@@ -2,9 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import type { eventArray } from '../../types';
 
-
 export interface CounterState {
-  value: number;
   event: eventArray[];
 }
 
@@ -21,16 +19,19 @@ export interface CounterState {
 // };
 
 const initialState: CounterState = {
-  value: 0,
   event: [],
 };
 
 interface SingleEvent {
-  payload: { id: number; date: string; title: string; time: string; other: string };
+  payload: { id: string; date: string; title: string; time: string; other: string; img: string };
 }
 
 interface payl {
-  payload: { id: number; newTitle: string };
+  payload: { id: string; newTitle: string };
+}
+
+interface remove {
+  payload: { id: string };
 }
 
 export const calendarSlice = createSlice({
@@ -40,17 +41,15 @@ export const calendarSlice = createSlice({
     renameEvent: (state, action: payl) => {
       const eventToUpdate = state.event.find((el) => el.id === action.payload.id);
       if (eventToUpdate) {
-        eventToUpdate.other = action.payload.newTitle; 
+        eventToUpdate.other = action.payload.newTitle;
       }
     },
     addEvent: (state, action: SingleEvent) => {
       state.event = [...state.event, action.payload];
     },
-    removeEvent: (state, action) => {
+    removeEvent: (state, action: remove) => {
       state.event = state.event.filter((el) => el.id !== action.payload.id);
-      console.log('message')
     },
-
   },
 });
 

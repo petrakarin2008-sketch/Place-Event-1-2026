@@ -6,21 +6,22 @@ const colors = ['yellow', 'blue', 'red'];
 interface UpcomingCardProps {
   list: ps;
   isActive: boolean;
-  onToggle: (id: number) => void;
-  onRemove: (id: number) => void;
-  onRename: (id: number, arg2: string) => void;
+  onToggle: (id: string) => void;
+  onRemove: (id: string) => void;
+  onRename: (id: string, arg2: string) => void;
 }
 interface ps {
-  id: number;
+  id: string;
   date: string;
   title: string;
   time: string;
+  img:string,
   other: string;
 }
 
 const UpcomingCard = React.memo(
   ({ list, isActive, onToggle, onRemove, onRename }: UpcomingCardProps) => {
-    const { title, time, date, other, id } = list;
+    const { title, time, date, other, id,img } = list;
 
     const [randomColor] = useState(() => colors[Math.floor(Math.random() * colors.length)]); //создастя только при рендере компонента
 
@@ -32,7 +33,7 @@ const UpcomingCard = React.memo(
         className={`upcoming-card ${randomColor}  ${isActive && 'active'}`}
         onClick={() => onToggle(id)}>
         <div className="upcoming-card__header">
-          <img src="starbucks.png" alt="Starbucks" className="brand-icon" />
+          <img src={img} alt="Starbucks" className="brand-icon" />
           <span className="date">{date}</span>
         </div>
         <h4 className="upcoming-card__title">{title}</h4>

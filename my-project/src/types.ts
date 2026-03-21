@@ -1,8 +1,9 @@
 export interface eventArray {
-  id: number;
+  id: string;
   date: string;
   title: string;
   time: string;
+  img:string;
   other: string;
 }
 
@@ -520,6 +521,7 @@ export interface Image {
 
 export interface ICartDetail {
   name: string;
+ 
   type: string;
   id: string;
   test: boolean;

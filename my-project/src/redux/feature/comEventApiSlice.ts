@@ -107,6 +107,7 @@ export interface WeatherState {
 
   inputValRed: string;
   filtersComingEvent: Event[];
+  isClickBut: Record<string, boolean>;
 }
 
 const initialState: WeatherState = {
@@ -124,6 +125,7 @@ const initialState: WeatherState = {
   pageAllEv: 0,
   isLoadingAllEv: false,
   errorAllEv: '',
+  isClickBut: {},
 };
 
 export const comEventApiSlice = createSlice({
@@ -160,6 +162,14 @@ export const comEventApiSlice = createSlice({
     },
     removeCartDetail: (state) => {
       state.cartDetail = {};
+    },
+    updateIsClickBut: (state, action) => {
+      const id = action.payload;
+      if (state.isClickBut[id]) {
+        delete state.isClickBut[id];
+      } else {
+        state.isClickBut[id] = true;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -220,8 +230,14 @@ export const comEventApiSlice = createSlice({
   },
 });
 
-export const { addFavourite, removeFavourite, inputValues, filterSeeAll, removeCartDetail } =
-  comEventApiSlice.actions;
+export const {
+  addFavourite,
+  removeFavourite,
+  inputValues,
+  filterSeeAll,
+  removeCartDetail,
+  updateIsClickBut,
+} = comEventApiSlice.actions;
 export const { useGetCartDetailIdQuery, useLazyGetCartDetailIdQuery } = cartDetailApi;
 
 export default comEventApiSlice.reducer;

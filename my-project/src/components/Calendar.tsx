@@ -4,12 +4,10 @@ import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
 
-
 const dayOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState<Dayjs>(dayjs());
-  
 
   const event = useSelector((state: RootState) => state.calendar.event);
 
@@ -24,17 +22,18 @@ const Calendar = () => {
 
         acc[dateKey].push({
           id: el.id,
-          title: el.title,
+          img: el.img,
         });
 
         return acc;
       },
-      {} as Record<string, { id: number; title: string }[]>,
+      {} as Record<string, { id: string; img: string }[]>,
     );
   }, [event]);
 
+  console.log(eventsMap, 'map', event, 'event');
 
-  const generateCalendar =useMemo( () => {
+  const generateCalendar = useMemo(() => {
     const firstDayOfMonth = currentMonth.startOf('month').day(); //31
 
     const firstDayIndex = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
@@ -78,9 +77,8 @@ const Calendar = () => {
         });
       }
     }
-    return allDays
-    
-  },[currentMonth]);
+    return allDays;
+  }, [currentMonth]);
 
   function changeMonth(type: string) {
     if (type === 'next') {
@@ -126,7 +124,7 @@ const Calendar = () => {
               <div className="event-dots">
                 {eventsMap[item.date.format('YYYY-MM-DD')]
                   ? eventsMap[item.date.format('YYYY-MM-DD')].map((el) => (
-                      <p key={el.id} className="dot orange">{el.title}</p>
+                      <img className="round-img " key={el.id} src={el.img} alt="" />
                     ))
                   : null}
               </div>

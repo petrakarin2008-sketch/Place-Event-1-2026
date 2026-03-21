@@ -10,20 +10,19 @@ const EventCard = ({ el }: { el: Event }) => {
   const navigation = useNavigate();
   const { favouriteEv } = useSelector((state: RootState) => state.eventsApi);
 
-  
   const dispatch = useAppDispatch();
   const date = dayjs(el.dates.start.localDate).format('DD MMMM').split(' ');
   const generateStableNum = (id: string) => {
     const charSum = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return (charSum % 20) + 1;
   };
-
+  const mainImage = el.images?.find((el) => el.height >= 500) || el.images?.[0];
   return (
     <>
       <div className="event-card" onClick={() => navigation(`/cart-detail/${el.id}`)}>
         <div className="event-card__image-wrapper">
           <img
-            src={el.images?.[0]?.url || 'image/vladimir-anikeev-IM8ZyYaSW6g-unsplash.jpg'}
+            src={mainImage?.url || 'image/vladimir-anikeev-IM8ZyYaSW6g-unsplash.jpg'}
             alt="Conference"
             className="event-card__img"
           />

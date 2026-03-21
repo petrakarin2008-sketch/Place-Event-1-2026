@@ -4,24 +4,35 @@ import { useAppDispatch, type RootState } from '../redux/store';
 import type { ICartDetail } from '../types';
 import dayjs from 'dayjs';
 import { FetchWeather } from '../redux/feature/weatherSlice';
-import { removeCartDetail, useLazyGetCartDetailIdQuery } from '../redux/feature/comEventApiSlice';
+import {
+  removeCartDetail,
+  updateIsClickBut,
+  useLazyGetCartDetailIdQuery,
+} from '../redux/feature/comEventApiSlice';
 import { useParams } from 'react-router-dom';
 import Weather from '../components/Weather';
-import { getDaysDifference } from '../utils';
+import { formateDate, formateTime, getDaysDifference } from '../utils';
 import Toast from '../components/Toast';
+import { addEvent, removeEvent } from '../redux/feature/calendarSlice';
 
 const CardDetails = () => {
   const cartDetail = useSelector((state: RootState) => state.eventsApi.cartDetail);
+
   const { id } = useParams();
+  const isClicked = useSelector(
+    (state: RootState) => state.eventsApi.isClickBut[id || ''] || false,
+  );
   const types = useRef<'today' | 'future'>('today');
+  const willDay = useRef<number>(1);
   const [isToast, setIsToast] = useState(false);
-  const [isClickBut, setIsClickBut] = useState(false);
 
   const event = (cartDetail || null) as ICartDetail;
-  const date = dayjs(event.dates?.start?.localDate).format('DD MMMM, YYYY');
-  const day = dayjs(event.dates?.start?.localDate).format('dddd');
-  const time = event.dates?.start?.localTime?.slice(0, 5) || 19.0;
+
+  const date = dayjs(event.dates?.start?.localDate).format('DD MMMM, YYYY') || '10 March 2026';
+  const day = dayjs(event.dates?.start?.localDate).format('dddd') || 'monday';
+  const time = event.dates?.start?.localTime?.slice(0, 5) || '19.00';
   const state = event._embedded?.venues?.[0].state?.name || '';
+
   const [trigger, { isLoading }] = useLazyGetCartDetailIdQuery();
   const dispatch = useAppDispatch();
 
@@ -46,11 +57,31 @@ const CardDetails = () => {
         types.current = 'future';
       } else {
         types.current = 'today';
+        willDay.current = daysAway + 1;
       }
 
-      dispatch(FetchWeather({ city, date, types: types.current }));
+      dispatch(FetchWeather({ city, date, types: types.current, willDay: willDay.current }));
     }
   }, [cartDetail]);
+
+  function addToEvent() {
+    dispatch(updateIsClickBut(event.id));
+
+    if (!isClicked) {
+      const images = event.images?.find((el) => el.height <= 115) || event.images?.[0];
+      const array = {
+        id: event.id,
+        date: formateDate(event?.dates?.start?.localDate),
+        title: event.name,
+        time: formateTime(event?.dates?.start?.localTime),
+        img: images.url,
+        other: '',
+      };
+      dispatch(addEvent({ ...array }));
+    } else {
+      dispatch(removeEvent({ id: event.id }));
+    }
+  }
 
   if (isLoading) return <p>Loading...</p>;
   const mainImage = event.images?.find((el) => el.height >= 500) || event.images?.[0];
@@ -64,7 +95,7 @@ const CardDetails = () => {
             <h1 className="trip-name">{event.name}</h1>
             <div className="info-pills">
               <div className="info-pill">
-                <img src={event.seatmap?.staticUrl} alt="location" />
+                <img src={event.seatmap?.staticUrl || '/vite.svg'} alt="location" />
                 <span>{`${event._embedded?.venues?.[0].country?.name}, ${state}${state && ','} ${event._embedded?.venues?.[0].city?.name}`}</span>
               </div>
             </div>
@@ -82,8 +113,12 @@ const CardDetails = () => {
 
           <section className="meta-row">
             <div className="chip-list">
-              <span className="chip bg-blue">{event.classifications?.[0].segment?.name}</span>
-              <span className="chip bg-green">{event.classifications?.[0].genre.name}</span>
+              <span className="chip bg-blue">
+                {event.classifications?.[0].segment?.name || 'sport'}
+              </span>
+              <span className="chip bg-green">
+                {event.classifications?.[0].genre?.name || 'sport'}
+              </span>
             </div>
           </section>
 
@@ -106,13 +141,13 @@ const CardDetails = () => {
             </div>
 
             <button
-              className={`btn-primary-large ${isClickBut && 'remove'}`}
-              disabled = {isToast}
+              className={`btn-primary-large ${isClicked ? 'remove' : 'default-clas'}`}
+              disabled={isToast}
               onClick={() => {
-                setIsClickBut(!isClickBut);
                 setIsToast(true);
+                addToEvent();
               }}>
-              {!isClickBut ? 'Add to calendar' : 'delete from calendar'}
+              {!isClicked ? 'Add to calendar' : 'delete from calendar'}
             </button>
           </div>
         </section>

@@ -12,12 +12,12 @@ const Toast = ({ onClose }: pr) => {
     const showTimer = setTimeout(() => setVisible(true), 10);
 
     // 2. Через 3 секунды запускаем анимацию "вверх"
-    const hideTimer = setTimeout(() => setVisible(false), 3000);
+    const hideTimer = setTimeout(() => setVisible(false), 1000);
 
     // 3. Полностью удаляем компонент из родителя после завершения анимации (через 3.5с)
     const removeTimer = setTimeout(() => {
       if (onClose) onClose();
-    }, 3500);
+    }, 1500);
 
     return () => {
       clearTimeout(showTimer);
