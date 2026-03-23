@@ -25,6 +25,7 @@ const CardDetails = () => {
   const types = useRef<'today' | 'future'>('today');
   const willDay = useRef<number>(1);
   const [isToast, setIsToast] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   const event = (cartDetail || null) as ICartDetail;
 
@@ -33,7 +34,7 @@ const CardDetails = () => {
   const time = event.dates?.start?.localTime?.slice(0, 5) || '19.00';
   const state = event._embedded?.venues?.[0].state?.name || '';
 
-  const [trigger, { isLoading }] = useLazyGetCartDetailIdQuery();
+  const [trigger, { isLoading, error }] = useLazyGetCartDetailIdQuery();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const CardDetails = () => {
   }, []);
 
   useEffect(() => {
-    if (cartDetail && cartDetail._embedded?.venues?.[0].city?.name) {
+    if (event && event._embedded?.venues?.[0].city?.name) {
       const city = event._embedded?.venues?.[0].city?.name;
       const date = event.dates?.start?.localDate;
 
@@ -59,10 +60,27 @@ const CardDetails = () => {
         types.current = 'today';
         willDay.current = daysAway + 1;
       }
+      setTimeout(() => {
+        setRetryCount(0);
+      }, 0);
 
       dispatch(FetchWeather({ city, date, types: types.current, willDay: willDay.current }));
     }
   }, [cartDetail]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    if (error && id && retryCount < 3) {
+      timer = setTimeout(() => {
+        console.log('Повторная попытка запроса...', retryCount);
+        setRetryCount((prev) => prev + 1);
+        trigger(id);
+      }, 5000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [error, id, trigger]);
 
   function addToEvent() {
     dispatch(updateIsClickBut(event.id));
@@ -85,6 +103,8 @@ const CardDetails = () => {
 
   if (isLoading) return <p>Loading...</p>;
   const mainImage = event.images?.find((el) => el.height >= 500) || event.images?.[0];
+
+  if (error) return <p>Упс! Что-то пошло не так :(</p>;
 
   return (
     <>

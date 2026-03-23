@@ -9,9 +9,9 @@ const Weather = () => {
     (state: RootState) => state.weather,
   );
 
-  if (isLoading) return <p>Загрузка...</p>;
+  if (isLoading) return <section className="weather-widget" style={{height:'33.5rem'}}><p>Загрузка...</p></section>;
 
-  if (viewType === 'error' && !weather) return <p>Нет данных</p>;
+  if (viewType === 'error' && !weather) return  <section className="weather-widget" style={{height:'33.5rem'}}><p>Нет данных</p></section>;
 
   if (viewType === 'current')
     return <CurrentWeather weather={weather as IWeather} weatherHour={weatherHour} />;

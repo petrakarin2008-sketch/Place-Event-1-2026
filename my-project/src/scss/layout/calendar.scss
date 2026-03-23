@@ -338,8 +338,16 @@ $text-sub: #71717a;
   color: #fafafa;
   font-weight: 600;
 
-  &:hover{
-    background-color: #961616;
+  
+}
+
+.upcoming-card__btn.info {
+  background-color: green;
+  color: #fafafa;
+  font-weight: 600;
+
+  &:disabled{
+    background-color: gray;
   }
 }
 
@@ -350,6 +358,7 @@ $bg-light: #f8f9fb;
 
 .note-section {
   background: #fff;
+  margin-top: 2rem;
   border-radius: 24px;
   padding: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);

@@ -21,13 +21,12 @@ const Home = () => {
   const [endtDate, setEndtDate] = useState('');
   const [filterVal, setFilterVal] = useState<string>();
   const [isEng, setIsEng] = useState(true);
-  const { comingEvents, isLoadingCom, errorCom, allEvents, isLoadingAllEv, pageAllEv } =
+  const { comingEvents, isLoadingCom, errorCom,errorAllEv, allEvents, isLoadingAllEv, pageAllEv } =
     useSelector((state: RootState) => state.eventsApi);
 
   const dispatch = useAppDispatch();
- 
 
-  const validation = (e) => {
+  const validation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     const regex = /[а-яёА-ЯЁ]/;
 
@@ -69,7 +68,6 @@ const Home = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollTags = (direction: number) => {
     if (scrollRef.current) {
-     
       const scrollAmount = scrollRef.current.clientWidth * 0.8;
 
       scrollRef.current.scrollBy({
@@ -87,6 +85,27 @@ const Home = () => {
   return (
     <>
       <EventTitle />
+
+      {errorCom && (
+        <div
+          style={{
+            padding: '20px',
+            backgroundColor: '#fff1f0',
+            
+            maxWidth: '800px',
+            borderRadius: '8px',
+            width: '100%',
+            height: '30rem',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            background: 'linear-gradient(90deg, rgb(149 149 149) 25%, rgb(164 162 162) 50%, rgb(149 149 149) 75%)',
+            justifyContent: 'center',
+            color: '#888',
+          }}>
+          <h3>Упс! Что-то пошло не так :(</h3>
+        </div>
+      )}
 
       {isLoadingCom ? (
         Array(2)
@@ -204,7 +223,8 @@ const Home = () => {
       </div>
 
       <section className="recomend">
-        {allevents.length === 0 && !isLoadingAllEv ? (
+        {errorAllEv && <p>Упс! Что-то пошло не так :(</p>}
+        {allevents.length === 0 && !isLoadingAllEv && errorAllEv.length ===0 ? (
           <p>По данному запросу ничего не найдено измените поиск</p>
         ) : null}
         <div className="seeAll-cart">

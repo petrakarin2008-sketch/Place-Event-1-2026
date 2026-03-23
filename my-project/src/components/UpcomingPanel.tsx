@@ -1,14 +1,14 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import UpcomingCard from './UpcomingCard';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../redux/store';
 import dayjs from 'dayjs';
 import { removeEvent, renameEvent } from '../redux/feature/calendarSlice';
+import { updateIsClickBut } from '../redux/feature/comEventApiSlice';
 
 const UpcomingPanel = () => {
-  const [activeId, setActiveId] = useState<string | null>(null);
   const dispatch = useDispatch();
- 
+
   const event = useSelector((state: RootState) => state.calendar.event);
 
   // 1. Готовим строки для сравнения ОДИН раз
@@ -18,17 +18,15 @@ const UpcomingPanel = () => {
   //     todayStr: now.format('YYYY-MM-DD'),
   //     tomorrowStr: now.add(1, 'day').format('YYYY-MM-DD')
   //   };
-  // }, []); 
+  // }, []);
 
-  
+  const isToday = useMemo(() => {
+    return event.filter((el) => dayjs(el.date).isSame(dayjs(), 'day'));
+  }, [event]);
 
-  const isToday = useMemo(()=>{
-    return event.filter((el)=> dayjs(el.date).isSame(dayjs(),'day'))
-  },[event])
-
-  const isTomorow = useMemo(()=>{
-    return event.filter((el)=> dayjs(el.date).isSame(dayjs().add(1, 'day'), 'day'))
-  },[event])
+  const isTomorow = useMemo(() => {
+    return event.filter((el) => dayjs(el.date).isSame(dayjs().add(1, 'day'), 'day'));
+  }, [event]);
 
   // const { todayEvents, tomorrowEvents } = useMemo(() => {
   //   const todayList: typeof event = [];
@@ -45,14 +43,18 @@ const UpcomingPanel = () => {
   //   return { todayEvents: todayList, tomorrowEvents: tomorrowList };
   // }, [event, todayStr, tomorrowStr]);
 
+  const allEvent = event.filter((el) => {
+    const isNotToday = !isToday.some((todayEl) => todayEl.date === el.date);
 
-  const handleToggle = useCallback((id: string) => {
-    setActiveId((prev) => (prev === id ? null : id));
-  }, []);
+    const isNotTomorrow = !isTomorow.some((tomorrowEl) => tomorrowEl.date === el.date);
+
+    return isNotToday && isNotTomorrow;
+  });
 
   const handleRemove = useCallback(
     (id: string) => {
       dispatch(removeEvent({ id }));
+      dispatch(updateIsClickBut(id));
     },
     [dispatch],
   );
@@ -72,6 +74,23 @@ const UpcomingPanel = () => {
   return (
     <aside className="upcoming-panel">
       <h2 className="upcoming-panel__title">Upcoming</h2>
+      <div className="upcoming-section">
+        <h3 className="upcoming-section__date">All Events</h3>
+
+        {allEvent.length !== 0 ? (
+          allEvent.map((el) => (
+            <UpcomingCard
+              key={el.id}
+              list={el}
+              color={'yellow'}
+              onRemove={handleRemove}
+              onRename={handleRename}
+            />
+          ))
+        ) : (
+          <p>пока нет событий</p>
+        )}
+      </div>
 
       <div className="upcoming-section">
         <h3 className="upcoming-section__date">Today</h3>
@@ -81,8 +100,7 @@ const UpcomingPanel = () => {
             <UpcomingCard
               key={el.id}
               list={el}
-              isActive={activeId === el.id}
-              onToggle={handleToggle}
+              color={'blue'}
               onRemove={handleRemove}
               onRename={handleRename}
             />
@@ -99,8 +117,7 @@ const UpcomingPanel = () => {
             <UpcomingCard
               key={el.id}
               list={el}
-              isActive={activeId === el.id}
-              onToggle={handleToggle}
+              color={'red'}
               onRename={handleRename}
               onRemove={handleRemove}
             />

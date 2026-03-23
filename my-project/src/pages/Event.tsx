@@ -17,14 +17,15 @@ const Event = () => {
             <div className="calendar-page">
               <Calendar />
             </div>
+             <NoteSection
+            isVisible={() => setIsToast(true)}
+            
+          />
           </main>
 
           <UpcomingPanel  />
 
-          <NoteSection
-            isVisible={() => setIsToast(true)}
-            
-          />
+         
         </div>
       </main>
     </>
