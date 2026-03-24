@@ -15,14 +15,14 @@ const Weather = () => {
       </section>
     );
 
-  if (viewType === 'error' && !weather)
+  if (!weather && viewType === 'error')
     return (
       <section className="weather-widget" style={{ height: '33.5rem' }}>
         <p>Нет данных</p>
       </section>
     );
 
-  if (!weather) return <p>Нет данных</p>;
+ 
 
   return (
     <section className="weather-widget">
@@ -37,10 +37,10 @@ const Weather = () => {
         </div>
 
         <div className="weather-widget__temp-block">
-          <span className="weather-widget__current-temp">{Math.round(weather?.avgtemp_c)}°</span>
+          <span className="weather-widget__current-temp">{Math.round(weather?.avgtemp_c ?? 10)}°</span>
           <div className="weather-widget__range">
-            <span className="high">{Math.round(weather?.maxtemp_c)}°</span> /{' '}
-            <span className="low">{Math.round(weather?.mintemp_c)}°</span>
+            <span className="high">{Math.round(weather?.maxtemp_c ?? 12)}°</span> 
+            <span className="low">{Math.round(weather?.mintemp_c ?? 7)}°</span>
           </div>
         </div>
       </div>

@@ -9,18 +9,6 @@ export interface eventArray {
 
 /////commingEvents///////////
 
-export interface NewEvent {
-  date: string;
-  city: string;
-  total: string;
-  name: string;
-  type: string;
-  id: string;
-  test: boolean;
-  url: string;
-  locale: string;
-  images: Image[];
-}
 export interface Event {
   name: string;
   type: string;

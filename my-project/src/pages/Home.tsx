@@ -18,11 +18,11 @@ const Home = () => {
   const [activeBut, setActiveBut] = useState('Music');
   const category = ['Music', 'Sport', 'All'];
   const [inputKeyword, setInputKeyword] = useState('');
-  const [startDate, setStartDate] = useState(()=> dayjs().format('YYYY-MM-DD'));
+  const [startDate, setStartDate] = useState(() => dayjs().format('YYYY-MM-DD'));
   const [endtDate, setEndtDate] = useState('');
   const [filterVal, setFilterVal] = useState<string>();
   const [isEng, setIsEng] = useState(true);
-  const { comingEvents, isLoadingCom, errorCom,errorAllEv, allEvents, isLoadingAllEv, pageAllEv } =
+  const { comingEvents, isLoadingCom, errorCom, errorAllEv, allEvents, isLoadingAllEv, pageAllEv } =
     useSelector((state: RootState) => state.eventsApi);
 
   const dispatch = useAppDispatch();
@@ -82,6 +82,7 @@ const Home = () => {
 
   const allevents = allEvents?.length !== 0 ? allEvents : [];
 
+ 
 
   return (
     <>
@@ -92,7 +93,7 @@ const Home = () => {
           style={{
             padding: '20px',
             backgroundColor: '#fff1f0',
-            
+
             maxWidth: '800px',
             borderRadius: '8px',
             width: '100%',
@@ -100,7 +101,8 @@ const Home = () => {
             margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
-            background: 'linear-gradient(90deg, rgb(149 149 149) 25%, rgb(164 162 162) 50%, rgb(149 149 149) 75%)',
+            background:
+              'linear-gradient(90deg, rgb(149 149 149) 25%, rgb(164 162 162) 50%, rgb(149 149 149) 75%)',
             justifyContent: 'center',
             color: '#888',
           }}>
@@ -218,14 +220,14 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <button className="filter-btn " disabled={!isEng} onClick={submite}>
+        <button className="filter-btn " disabled={isLoadingAllEv} onClick={submite}>
           Найти
         </button>
       </div>
 
       <section className="recomend">
         {errorAllEv && <p>Упс! Что-то пошло не так :(</p>}
-        {allevents.length === 0 && !isLoadingAllEv && errorAllEv.length ===0 ? (
+        {allevents.length === 0 && !isLoadingAllEv && errorAllEv.length === 0 ? (
           <p>По данному запросу ничего не найдено измените поиск</p>
         ) : null}
         <div className="seeAll-cart">

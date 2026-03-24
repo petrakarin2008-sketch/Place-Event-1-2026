@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Event, NewEvent } from '../../types';
+import type { Event } from '../../types';
 import type { ICartDetail } from '../../typescript/cartDetailsTS';
 
 interface FetchEventsArgs {
@@ -93,7 +93,7 @@ export const cartDetailApi = createApi({
   }),
 });
 export interface WeatherState {
-  comingEvents: NewEvent[];
+  comingEvents: Event[];
   allEvents: Event[];
   favouriteEv: Record<string, Omit<Event, 'id'>>;
   cartDetail: Partial<ICartDetail> | null;
@@ -107,13 +107,14 @@ export interface WeatherState {
   errorAllEv: string;
 
   inputValRed: string;
-  filtersComingEvent: NewEvent[];
+  filtersComingEvent: Event[];
   isClickBut: Record<string, boolean>;
 }
 
 const initialState: WeatherState = {
   comingEvents: [],
   allEvents: [],
+
   filtersComingEvent: [],
   cartDetail: {},
   inputValRed: '',
@@ -177,6 +178,7 @@ export const comEventApiSlice = createSlice({
     builder
       .addCase(FetchEvents.pending, (state) => {
         state.isLoadingCom = true;
+        state.errorCom = ''
       })
       .addCase(FetchEvents.fulfilled, (state, action) => {
         state.isLoadingCom = false;
@@ -185,19 +187,11 @@ export const comEventApiSlice = createSlice({
 
         const existingIds = new Set(state.comingEvents.map((event) => event.id));
 
-        const filteredAndTransformed = newEvents
-          .filter((newEvent:Event) => !existingIds.has(newEvent.id)) 
-          .map((newEvent:Event) => ({
-            id: newEvent.id,
-            name: newEvent.name,
-            date: newEvent.dates.start.localDate,
-            images: newEvent.images,
-            city: newEvent._embedded?.venues?.[0]?.city?.name,
-            total: newEvent._embedded?.venues?.[0]?.upcomingEvents?._total,
-          }));
+        const filteredAndTransformed = newEvents.filter(
+          (newEvent: Event) => !existingIds.has(newEvent.id),
+        );
 
         state.comingEvents.push(...filteredAndTransformed);
-       
 
         state.pageCom += 1;
       })

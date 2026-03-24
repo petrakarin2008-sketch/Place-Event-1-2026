@@ -15,6 +15,7 @@ import { formateDate, formateTime, getDaysDifference } from '../utils';
 import Toast from '../components/Toast';
 import { addEvent, removeEvent } from '../redux/feature/calendarSlice';
 import type { ICartDetail } from '../typescript/cartDetailsTS';
+import CardDetailsSkeleton from '../skeletons/CardDetailsSkeleton';
 
 const CardDetails = () => {
   const cartDetail = useSelector((state: RootState) => state.eventsApi.cartDetail);
@@ -32,7 +33,7 @@ const CardDetails = () => {
 
   const date = dayjs(event.date).format('DD MMMM, YYYY') || '10 March 2026';
   const day = dayjs(event.date).format('dddd') || 'monday';
-  const time = event.time?.slice(0,5) ||  '19.00';
+  const time = event.time?.slice(0, 5) || '19.00';
   const { state } = event || '';
 
   const [trigger, { isLoading, error }] = useLazyGetCartDetailIdQuery();
@@ -101,10 +102,14 @@ const CardDetails = () => {
     }
   }
 
-  if (isLoading) return <p>Loading...</p>;
-  const mainImage = event.images?.find((el) => el.height >= 500) || event.images?.[0];
+  if (isLoading) return <CardDetailsSkeleton />;
 
-  if (error) return <p>Упс! Что-то пошло не так :(</p>;
+  const mainImage =
+    event.images?.find((img) => img.url.includes('RETINA_LANDSCAPE_16_9')) ||
+    event.images?.find((img) => img.width > 1000) ||
+    event.images?.[0];
+
+  if (error && !isLoading) return <div className="error-message">Ошибка загрузки...</div>;
 
   return (
     <>
@@ -115,15 +120,24 @@ const CardDetails = () => {
             <h1 className="trip-name">{event.name}</h1>
             <div className="info-pills">
               <div className="info-pill">
-                <img src={event.seatmap || '/vite.svg'} alt="location" />
-                <span>{`${event.country}, ${state}${state && ','} ${event.city}`}</span>
+                <img src={event?.seatmap || '/vite.svg'} alt="location" />
+                <span>
+                  {`${event.country}${state ? `, ${state}` : ''}${event.city ? `, ${event.city}` : ''}`}
+                </span>
               </div>
             </div>
           </header>
 
           <section className="gallery">
-            {event.images?.[0]?.url ? (
-              <img src={mainImage?.url} alt="Main Event" className="gallery-img main" />
+            {mainImage?.url ? (
+              <img
+                width="1024"
+                height="576"
+                src={mainImage?.url}
+                fetchPriority="high"
+                alt="Main Event"
+                className="gallery-img main"
+              />
             ) : (
               <div className="gallery-placeholder">
                 <span>Изображение загружается...</span>

@@ -7,21 +7,21 @@ const SideBar = () => {
         <NavLink to="/">
           {({ isActive }) => (
             <li className={isActive ? 'active' : ''}>
-              <img src="./image/home-svgrepo-com.png" alt="Домой" />
+              <img src="/image/home-svgrepo-com.png" alt="Домой" />
             </li>
           )}
         </NavLink>
         <NavLink to="/favourites">
           {({ isActive }) => (
             <li className={isActive ? 'active' : ''}>
-              <img src="./image/heart-angle-svgrepo-com.png" alt="Избранное" />
+              <img src="/image/heart-angle-svgrepo-com.png" alt="Избранное" />
             </li>
           )}
         </NavLink>
         <NavLink to="/events">
           {({ isActive }) => (
             <li className={isActive ? 'active' : ''}>
-              <img src="./image/calendar-svgrepo-com.png" alt="События" />
+              <img src="/image/calendar-svgrepo-com.png" alt="События" />
             </li>
           )}
         </NavLink>

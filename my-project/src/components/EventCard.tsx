@@ -1,23 +1,27 @@
 import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
-import type { NewEvent } from '../types';
+import type { Event } from '../types';
 import { useAppDispatch, type RootState } from '../redux/store';
 import { addFavourite, removeFavourite } from '../redux/feature/comEventApiSlice';
 import { useSelector } from 'react-redux';
 
-const EventCard = ({ el }: { el: NewEvent }) => {
+const EventCard = ({ el }: { el: Event }) => {
   const navigation = useNavigate();
   const { favouriteEv } = useSelector((state: RootState) => state.eventsApi);
 
   const dispatch = useAppDispatch();
-  const date = dayjs(el.date).format('DD MMMM').split(' ');
+  const date = dayjs(el.dates.start.localDate).format('DD MMMM').split(' ');
   const generateStableNum = (id: string) => {
     const charSum = id?.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return (charSum % 20) + 1;
   };
- 
-  const mainImage = el.images?.find((el) => el.height >= 500) || el.images?.[0];
+
+  const mainImage =
+    el.images?.find((el) => el.url.includes('RETINA_PORTRAIT')) ||
+    el.images?.find((img) => img.width < 1000) ||
+    el.images?.[0];
+
   return (
     <>
       <div className="event-card" onClick={() => navigation(`/cart-detail/${el.id}`)}>
@@ -60,11 +64,15 @@ const EventCard = ({ el }: { el: NewEvent }) => {
             </div>
 
             <div className="event-card__location">
-              <span className="icon">📍</span> {el.city || 'TBA'}
+              <span className="icon">📍</span> {el._embedded.venues[0].city.name || 'TBA'}
             </div>
           </div>
 
-          <div className="event-card__price">{el.total ? `$${el.total}` : 'Price TBA'}</div>
+          <div className="event-card__price">
+            {el._embedded?.venues[0]?.upcomingEvents?._total
+              ? `$${el._embedded?.venues[0]?.upcomingEvents?._total}`
+              : 'Price TBA'}
+          </div>
         </div>
       </div>
     </>

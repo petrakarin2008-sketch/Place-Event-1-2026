@@ -12,10 +12,11 @@ interface Idates {
 export const FetchWeather = createAsyncThunk(
   'weather/fetch',
   async ({ city, date, types, willDay }: Idates, thunkAPI) => {
+    const api = '83ba5181d2434bd6861103130261003'
     const url =
       types === 'today'
-        ? `https://api.weatherapi.com/v1/forecast.json?key=83ba5181d2434bd6861103130261003&q=${city}&days=${willDay}&aqi=no&alerts=no`
-        : `http://api.weatherapi.com/v1/future.json?key=83ba5181d2434bd6861103130261003&q=${city}&dt=${date}`;
+        ? `https://api.weatherapi.com/v1/forecast.json?key=${api}&q=${city}&days=${willDay}&aqi=no&alerts=no`
+        : `http://api.weatherapi.com/v1/future.json?key=${api}&q=${city}&dt=${date}`;
 
     try {
       const response = await fetch(url);
@@ -56,6 +57,10 @@ export const weatherSlice = createSlice({
       })
       .addCase(FetchWeather.fulfilled, (state, { payload }) => {
         state.viewType = 'current' in payload ? 'current' : 'future';
+
+        console.log(payload);
+
+
         const length = payload.forecast.forecastday.length - 1;
         const transform = {
           name: payload.location.name,
@@ -72,7 +77,7 @@ export const weatherSlice = createSlice({
           forecastday: payload.forecast?.forecastday,
           date: payload.forecast?.forecastday?.[length]?.date,
         };
-        console.log(transform);
+        
 
         state.weather = transform;
 
