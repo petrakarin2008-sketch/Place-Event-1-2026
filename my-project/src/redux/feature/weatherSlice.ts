@@ -9,10 +9,12 @@ interface Idates {
   willDay: number;
 }
 
+const api = import.meta.env.VITE_WEATHER_API_KEY
+
 export const FetchWeather = createAsyncThunk(
   'weather/fetch',
   async ({ city, date, types, willDay }: Idates, thunkAPI) => {
-    const api = '83ba5181d2434bd6861103130261003'
+    
     const url =
       types === 'today'
         ? `https://api.weatherapi.com/v1/forecast.json?key=${api}&q=${city}&days=${willDay}&aqi=no&alerts=no`

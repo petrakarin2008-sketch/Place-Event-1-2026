@@ -39,7 +39,7 @@ const Weather = () => {
         <div className="weather-widget__temp-block">
           <span className="weather-widget__current-temp">{Math.round(weather?.avgtemp_c ?? 10)}°</span>
           <div className="weather-widget__range">
-            <span className="high">{Math.round(weather?.maxtemp_c ?? 12)}°</span> 
+            <span className="high">{Math.round(weather?.maxtemp_c ?? 12)}° / </span> 
             <span className="low">{Math.round(weather?.mintemp_c ?? 7)}°</span>
           </div>
         </div>

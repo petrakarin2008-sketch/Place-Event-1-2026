@@ -18,12 +18,15 @@ interface FetchAllEvents {
   classificationName: string;
   other: boolean;
 }
+
+const apiKey = import.meta.env.VITE_TICKETMASTER_API_KEY;
+
 export const FetchEvents = createAsyncThunk(
   'events/fetch',
   async ({ start, end, page }: FetchEventsArgs, thunkAPI) => {
     try {
       const response = await fetch(
-        `https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=${start}&page=${page}&endDateTime=${end}&apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w`,
+        `https://app.ticketmaster.com/discovery/v2/events.json?startDateTime=${start}&page=${page}&endDateTime=${end}&apikey=${apiKey}`,
       );
       if (!response.ok) {
         const errorData = await response.json();
@@ -51,8 +54,9 @@ export const Fetch = createAsyncThunk(
     }: Partial<FetchAllEvents>,
     thunkAPI,
   ) => {
+   
     const queryParams: Record<string, string | number | undefined> = {
-      apikey: 'BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w',
+      apikey: apiKey,
       page,
       ...(start && { startDateTime: `${start}T00:00:00Z` }),
       ...(end && { endDateTime: `${end}T00:00:00Z` }),
@@ -96,7 +100,7 @@ export const cartDetailApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://app.ticketmaster.com/discovery/v2/' }),
   endpoints: (builder) => ({
     getCartDetailId: builder.query({
-      query: (id) => `events/${id}.json?apikey=BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w`,
+      query: (id) => `events/${id}.json?apikey=${apiKey}`,
     }),
   }),
 });
