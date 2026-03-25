@@ -1,5 +1,7 @@
 📅 EventSpace — Event Search Platform
 EventSpace — это современное веб-приложение для поиска событий по всему миру. Проект интегрирован с Ticketmaster API, позволяет фильтровать мероприятия по категориям, датам, а также сохранять их в избранное.
+<img width="1272" height="882" alt="image" src="https://github.com/user-attachments/assets/c03e16c7-22bd-4476-867f-3628f9d8f989" />
+
 
 🚀 Технологический стек
 React 18 (Functional Components, Hooks)
