@@ -51,7 +51,7 @@ export const Fetch = createAsyncThunk(
     }: Partial<FetchAllEvents>,
     thunkAPI,
   ) => {
-    const queryParams: Record<string, any> = {
+    const queryParams: Record<string, string | number | undefined> = {
       apikey: 'BpvqSH8A8zdDv1ji3n1Hs5sQiPpDt77w',
       page,
       ...(start && { startDateTime: `${start}T00:00:00Z` }),
@@ -61,7 +61,15 @@ export const Fetch = createAsyncThunk(
       ...(sort && { sort }),
     };
 
-    const searchParams = new URLSearchParams(queryParams).toString();
+    const cleanParams: Record<string, string> = {};
+
+    Object.entries(queryParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        cleanParams[key] = String(value);
+      }
+    });
+
+    const searchParams = new URLSearchParams(cleanParams).toString();
 
     try {
       const response = await fetch(
@@ -178,7 +186,7 @@ export const comEventApiSlice = createSlice({
     builder
       .addCase(FetchEvents.pending, (state) => {
         state.isLoadingCom = true;
-        state.errorCom = ''
+        state.errorCom = '';
       })
       .addCase(FetchEvents.fulfilled, (state, action) => {
         state.isLoadingCom = false;

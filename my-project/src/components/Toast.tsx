@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 
 type pr = {
-  onClose: ()=> void;
+  onClose: () => void;
 };
 
 const Toast = ({ onClose }: pr) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    // 1. Сразу после монтирования включаем анимацию "вниз"
     const showTimer = setTimeout(() => setVisible(true), 10);
 
-    // 2. Через 3 секунды запускаем анимацию "вверх"
     const hideTimer = setTimeout(() => setVisible(false), 1000);
 
-    // 3. Полностью удаляем компонент из родителя после завершения анимации (через 3.5с)
     const removeTimer = setTimeout(() => {
       if (onClose) onClose();
     }, 1500);
@@ -42,5 +39,4 @@ const Toast = ({ onClose }: pr) => {
   );
 };
 
-export default Toast
-
+export default Toast;

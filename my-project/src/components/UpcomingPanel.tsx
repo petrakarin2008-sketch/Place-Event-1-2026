@@ -11,15 +11,6 @@ const UpcomingPanel = () => {
 
   const event = useSelector((state: RootState) => state.calendar.event);
 
-  // 1. Готовим строки для сравнения ОДИН раз
-  // const { todayStr, tomorrowStr } = useMemo(() => {
-  //   const now = dayjs();
-  //   return {
-  //     todayStr: now.format('YYYY-MM-DD'),
-  //     tomorrowStr: now.add(1, 'day').format('YYYY-MM-DD')
-  //   };
-  // }, []);
-
   const isToday = useMemo(() => {
     return event.filter((el) => dayjs(el.date).isSame(dayjs(), 'day'));
   }, [event]);
@@ -27,21 +18,6 @@ const UpcomingPanel = () => {
   const isTomorow = useMemo(() => {
     return event.filter((el) => dayjs(el.date).isSame(dayjs().add(1, 'day'), 'day'));
   }, [event]);
-
-  // const { todayEvents, tomorrowEvents } = useMemo(() => {
-  //   const todayList: typeof event = [];
-  //   const tomorrowList: typeof event = [];
-
-  //   event.forEach((el) => {
-  //     if (el.date.startsWith(todayStr)) {
-  //       todayList.push(el);
-  //     } else if (el.date.startsWith(tomorrowStr)) {
-  //       tomorrowList.push(el);
-  //     }
-  //   });
-
-  //   return { todayEvents: todayList, tomorrowEvents: tomorrowList };
-  // }, [event, todayStr, tomorrowStr]);
 
   const allEvent = event.filter((el) => {
     const isNotToday = !isToday.some((todayEl) => todayEl.date === el.date);
